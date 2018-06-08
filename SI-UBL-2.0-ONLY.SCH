@@ -58,11 +58,9 @@
 
     <!-- Document level -->
     <rule context="ubl-creditnote:CreditNote | ubl-invoice:Invoice">
-      <!-- Removed for SI-UBL 2.0; difference with PEPPOL
       <assert id="PEPPOL-EN16931-R001"
               test="cbc:ProfileID"
-              flag="fatal">Business process MUST be provided.</assert>
-      -->
+              flag="warning">For use with PEPPOL infrastructure, ProfileID is mandatory.</assert>
       <assert id="PEPPOL-EN16931-R002"
               test="count(cbc:Note) &lt;= 1"
               flag="fatal">No more than one note is allowed on document level.</assert>
