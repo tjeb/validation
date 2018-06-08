@@ -321,11 +321,13 @@
     <!-- Below are additions for SI-UBL 2.0 -->
     <!-- ================================== -->
 
+<!-- deze is vervallen
     <rule context="cac:AdditionalDocumentReference">
       <assert id="SI-UBL-2.0-R1-TODO-FIND-RULENUMBER"
               test="cbc:DocumentTypeCode"
               flag="fatal">AdditionalDocumentReference MUST contain a DocumentTypeCode.</assert>
     </rule>
+-->
 
     <rule context="cac:AccountingSupplierParty/cac:Party/cac:PostalAddress">
       <assert id="SI-UBL-2.0-R2-TODO-FIND-RULENUMBER"
