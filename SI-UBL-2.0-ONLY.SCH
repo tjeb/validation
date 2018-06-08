@@ -58,6 +58,7 @@
 
     <!-- Document level -->
     <rule context="ubl-creditnote:CreditNote | ubl-invoice:Invoice">
+      <!-- Difference for SI-2.0 / NLCIUS with PEPPOL, where this field is mandatory -->
       <assert id="PEPPOL-EN16931-R001"
               test="cbc:ProfileID"
               flag="warning">For use with PEPPOL infrastructure, ProfileID is mandatory.</assert>
