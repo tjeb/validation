@@ -151,17 +151,26 @@
       <!-- should move BR-NL-32 to its own context too, then add BR-NL-34 there -->
       <assert id="BR-NL-32-1"
               test="cac:AllowanceCharge/cbc:AllowanceChargeReasonCode"
-              flag="warning">[BR-NL-32] The use of an allowance or charge reason code (cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
+              flag="warning">[BR-NL-32] The use of an allowance reason code (cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
       <assert id="BR-NL-32-2"
               test="cac:InvoiceLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode"
-              flag="warning">[BR-NL-32] The use of an allowance or charge reason code (cac:InvoiceLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
+              flag="warning">[BR-NL-32] The use of an allowance reason code (cac:InvoiceLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
       <assert id="BR-NL-32-3"
               test="cac:CreditNoteLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode"
-              flag="warning">[BR-NL-32] The use of an allowance or charge reason code (cac:CreditNoteLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
+              flag="warning">[BR-NL-32] The use of an allowance reason code (cac:CreditNoteLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
       <!-- TODO: this test needs checking and testing -->
       <assert id="BR-NL-33"
               test="cac:TaxTotal/cbc:TaxAmount/@currencyID and cbc:DocumentCurrencyCode and cac:TaxTotal/cbc:TaxAmount/@currencyID != cbc:DocumentCurrencyCode"
               flag="warning">[BR-NL-33] The use of a tax total in accounting currency (cac:TaxTotal/cbc:TaxAmount/@currencyID different than DocumentCurrencyCode) is not recommended</assert>
+      <assert id="BR-NL-32-1"
+              test="cac:AllowanceCharge/cbc:AllowanceChargeReasonCode"
+              flag="warning">[BR-NL-32] The use of a charge reason code (cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
+      <assert id="BR-NL-32-2"
+              test="cac:InvoiceLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode"
+              flag="warning">[BR-NL-32] The use of a charge reason code (cac:InvoiceLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
+      <assert id="BR-NL-32-3"
+              test="cac:CreditNoteLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode"
+              flag="warning">[BR-NL-32] The use of a charge reason code (cac:CreditNoteLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
       <assert id="BR-NL-35"
               test="cac:TaxTotal/cac:TaxSubtotal/cac:TaxCategory/cbc:TaxExemptionReasonCode"
               flag="warning">[BR-NL-35] The use of a tax exemption reason code (cac:TaxTotal/cac:TaxSubtotal/cac:TaxCategory/cbc:TaxExemptionReasonCode) is not recommended</assert>
