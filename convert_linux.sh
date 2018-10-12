@@ -15,6 +15,8 @@ function do_cmd {
     $@
 }
 
-do_cmd java -jar ./lib/saxon9he.jar -o:${CONVERT_BASE}/temp/step1_dsdl.xsl $INPUT_FILE ${CONVERT_BASE}/convert/iso_dsdl_include.xsl &&\
-do_cmd java -jar ./lib/saxon9he.jar -o:${CONVERT_BASE}/temp/step2_abstract.xsl ${CONVERT_BASE}/temp/step1_dsdl.xsl ${CONVERT_BASE}/convert/iso_abstract_expand.xsl &&\
-do_cmd java -jar ./lib/saxon9he.jar -o:${OUTPUT_FILE} ${CONVERT_BASE}/temp/step2_abstract.xsl ${CONVERT_BASE}/convert/iso_svrl_for_xslt2.xsl
+PARAMS="generate-fired-rule=false property=true"
+
+do_cmd java -jar ./lib/saxon9he.jar -o:${CONVERT_BASE}/temp/step1_dsdl.xsl $INPUT_FILE ${CONVERT_BASE}/convert/iso_dsdl_include.xsl $PARAMS &&\
+do_cmd java -jar ./lib/saxon9he.jar -o:${CONVERT_BASE}/temp/step2_abstract.xsl ${CONVERT_BASE}/temp/step1_dsdl.xsl ${CONVERT_BASE}/convert/iso_abstract_expand.xsl $PARAMS &&\
+do_cmd java -jar ./lib/saxon9he.jar -o:${OUTPUT_FILE} ${CONVERT_BASE}/temp/step2_abstract.xsl ${CONVERT_BASE}/convert/iso_svrl_for_xslt2.xsl $PARAMS

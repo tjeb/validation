@@ -12,9 +12,8 @@
            See http://docs.peppol.eu/poacc/billing/3.0/rules/BR-CL-11/
         -->
       <assert id="BR-NL-1"
-              test="(cac:PartyLegalEntity/cbc:CompanyID/@schemeID=0106) or (cac:PartyLegalEntity/cbc:CompanyID/@schemeID=0190)"
+              test="contains(' 0106 0190 ', concat(' ', normalize-space(cac:PartyLegalEntity/cbc:CompanyID/@schemeID), ' '))"
               flag="fatal">[BR-NL-1] For suppliers in the Netherlands the supplier MUST provide either a KVK or OIN number for its legal entity identifier (cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID with schemeID 0106 or 0190)</assert>
-
       <assert id="BR-NL-2"
               test="(/ubl:Invoice/cbc:BuyerReference) or (/ubl:Invoice/cac:OrderReference/cbc:ID)"
               flag="fatal">[BR-NL-2] For suppliers in the Netherlands, the invoice MUST contain either the buyer reference (cbc:BuyerReference) or the order reference (cac:OrderReference/cbc:ID)</assert>
@@ -46,14 +45,9 @@
               test="/ubl:Invoice/cbc:InvoiceTypeCode != 384 or
                     /ubl:Invoice/cac:BillingReference/cac:InvoiceDocumentReference/cbc:ID"
               flag="fatal">[BR-NL-9] For suppliers in the Netherlands, if the document is a corrective invoice (cbc:InvoiceTypeCode = 384), the document MUST contain an invoice reference (cac:BillingReference/cac:InvoiceDocumentReference/cbc:ID)</assert>
-
       <assert id="BR-NL-10"
-              test="/ubl:Invoice/cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cac:Country/cbc:IdentificationCode != 'NL' or (
-                  not(/Invoice/cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID) or
-                  /Invoice/cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID/@schemeID=0106 or
-                  /Invoice/cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID/@schemeID=0190)"
+              test="/ubl:Invoice/cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cac:Country/cbc:IdentificationCode != 'NL' or ((not(contains(/ubl:Invoice/cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID/@schemeID, ' '))) and contains(' 0106 0190 ', concat(' ', normalize-space(/ubl:Invoice/cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID/@schemeID), ' ')))"
               flag="fatal">[BR-NL-10] For suppliers in the Netherlands, if the customer is in the Netherlands, the customer's legal entity identifier (cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID) MUST be either a KVK (schemeID=0106) or OIN number (schemeID=0190)</assert>
-
       <assert id="BR-NL-11"
               test="/ubl:Invoice/cac:PaymentMeans"
               flag="fatal">[BR-NL-11] For suppliers in the Netherlands, the supplier MUST provide a means of payment (cac:PaymentMeans) if the payment is from customer to supplier</assert>

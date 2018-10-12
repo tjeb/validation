@@ -22,7 +22,7 @@
     <ns prefix="xs" uri="http://www.w3.org/2001/XMLSchema"/>
 
     <!-- basic CustomizationID check -->
-    <include href="general/SI-UBL-2.0-TMP.SCH" />
+    <include href="general/SI-UBL-INV-2.0.SCH" />
 
     <!-- EN-16931 -->
     <include href="CenPC434/abstract/EN16931-model.sch"/>

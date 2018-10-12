@@ -146,7 +146,8 @@
    xmlns:schold="http://www.ascc.net/xml/schematron"
    xmlns:iso="http://purl.oclc.org/dsdl/schematron"
    xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
-
+   xmlns:saxon="http://saxon.sf.net/"
+   xmlns:tjeb-extensions="http://tjeb.nl/xml/extensions/"
 >
 
 <!-- Select the import statement and adjust the path as
@@ -264,6 +265,9 @@
 	<xsl:param name="see" />
 	<xsl:param name="space" />
 	<svrl:failed-assert test="{$test}" >
+		<axsl:attribute name="line">
+		    <axsl:value-of select="tjeb-extensions:linenumbers() " />
+		</axsl:attribute>
 		<xsl:if test="string-length( $id ) &gt; 0">
 			<axsl:attribute name="id">
 				<xsl:value-of select=" $id " />
