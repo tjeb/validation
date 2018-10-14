@@ -15,7 +15,7 @@
               test="contains(' 0106 0190 ', concat(' ', normalize-space(cac:PartyLegalEntity/cbc:CompanyID/@schemeID), ' '))"
               flag="fatal">[BR-NL-1] For suppliers in the Netherlands the supplier MUST provide either a KVK or OIN number for its legal entity identifier (cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID with schemeID 0106 or 0190)</assert>
       <assert id="BR-NL-2"
-              test="(/ubl:Invoice/cbc:BuyerReference) or (/ubl:Invoice/cac:OrderReference/cbc:ID)"
+              test="(//cbc:BuyerReference) or (//cac:OrderReference/cbc:ID)"
               flag="fatal">[BR-NL-2] For suppliers in the Netherlands, the invoice MUST contain either the buyer reference (cbc:BuyerReference) or the order reference (cac:OrderReference/cbc:ID)</assert>
 
       <assert id="BR-NL-3"
@@ -25,40 +25,40 @@
               flag="fatal">[BR-NL-3] For suppliers in the Netherlands the supplier's address (cac:AccountingSupplierParty/cac:Party/cac:PostalAddress) MUST contain street name (cbc:StreetName), city (cbc:CityName) and postal zone (cbc:PostalZone)</assert>
 
       <assert id="BR-NL-4"
-              test="/ubl:Invoice/cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cac:Country/cbc:IdentificationCode != 'NL' or (
-                    /ubl:Invoice/cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cbc:StreetName and
-                    /ubl:Invoice/cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cbc:CityName and
-                    /ubl:Invoice/cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cbc:PostalZone)"
+              test="//cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cac:Country/cbc:IdentificationCode != 'NL' or (
+                    //cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cbc:StreetName and
+                    //cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cbc:CityName and
+                    //cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cbc:PostalZone)"
               flag="fatal">[BR-NL-4] For suppliers in the Netherlands, if the customer is in the Netherlands, the customer address (cac:AccountingCustomerParty/cac:Party/cac:PostalAddress) MUST contain the street name (cbc:StreetName), the city (cbc:CityName) and the postal zone (cbc:PostalZone)</assert>
 
       <assert id="BR-NL-5"
-              test="(not(/ubl:Invoice/cac:TaxRepresentativeParty)) or
-                    (/ubl:Invoice/cac:TaxRepresentativeParty/cac:PostalAddress/cac:Country/cbc:IdentificationCode != 'NL') or (
-                    /ubl:Invoice/cac:TaxRepresentativeParty/cac:PostalAddress/cbc:StreetName and
-                    /ubl:Invoice/cac:TaxRepresentativeParty/cac:PostalAddress/cbc:CityName and
-                    /ubl:Invoice/cac:TaxRepresentativeParty/cac:PostalAddress/cbc:PostalZone)"
+              test="(not(//cac:TaxRepresentativeParty)) or
+                    (//cac:TaxRepresentativeParty/cac:PostalAddress/cac:Country/cbc:IdentificationCode != 'NL') or (
+                    //cac:TaxRepresentativeParty/cac:PostalAddress/cbc:StreetName and
+                    //cac:TaxRepresentativeParty/cac:PostalAddress/cbc:CityName and
+                    //cac:TaxRepresentativeParty/cac:PostalAddress/cbc:PostalZone)"
               flag="fatal">[BR-NL-5] For suppliers in the Netherlands, if the fiscal representative is in the Netherlands, the representative's address (cac:TaxRepresentativeParty/cac:PostalAddress) MUST contain street name (cbc:StreetName), city (cbc:CityName) and postal zone (cbc:PostalZone)</assert>
 
       <!-- BR-NL-6 is not specified; BR-NL-7 and BR-NL-8 are specified below -->
 
       <assert id="BR-NL-9"
-              test="/ubl:Invoice/cbc:InvoiceTypeCode != 384 or
-                    /ubl:Invoice/cac:BillingReference/cac:InvoiceDocumentReference/cbc:ID"
+              test="//cbc:InvoiceTypeCode != 384 or
+                    //cac:BillingReference/cac:InvoiceDocumentReference/cbc:ID"
               flag="fatal">[BR-NL-9] For suppliers in the Netherlands, if the document is a corrective invoice (cbc:InvoiceTypeCode = 384), the document MUST contain an invoice reference (cac:BillingReference/cac:InvoiceDocumentReference/cbc:ID)</assert>
       <assert id="BR-NL-10"
-              test="not(/ubl:Invoice/cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cac:Country/cbc:IdentificationCode = 'NL' and /ubl:Invoice/cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID and not(contains(' 0106 0190 ', concat(' ', normalize-space(/ubl:Invoice/cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID/@schemeID), ' '))))"
+              test="not(//cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cac:Country/cbc:IdentificationCode = 'NL' and //cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID and not(contains(' 0106 0190 ', concat(' ', normalize-space(//cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID/@schemeID), ' '))))"
               flag="fatal">[BR-NL-10] For suppliers in the Netherlands, if the customer is in the Netherlands, the customer's legal entity identifier (cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID) MUST be either a KVK (schemeID=0106) or OIN number (schemeID=0190)</assert>
       <assert id="BR-NL-11"
-              test="/ubl:Invoice/cac:PaymentMeans"
+              test="//cac:PaymentMeans"
               flag="fatal">[BR-NL-11] For suppliers in the Netherlands, the supplier MUST provide a means of payment (cac:PaymentMeans) if the payment is from customer to supplier</assert>
 
       <assert id="BR-NL-12"
-              test="/ubl:Invoice/cac:PaymentMeans/cbc:PaymentMeansCode = 30 or
-                    /ubl:Invoice/cac:PaymentMeans/cbc:PaymentMeansCode = 48 or
-                    /ubl:Invoice/cac:PaymentMeans/cbc:PaymentMeansCode = 49 or
-                    /ubl:Invoice/cac:PaymentMeans/cbc:PaymentMeansCode = 57 or
-                    /ubl:Invoice/cac:PaymentMeans/cbc:PaymentMeansCode = 58 or
-                    /ubl:Invoice/cac:PaymentMeans/cbc:PaymentMeansCode = 59"
+              test="//cac:PaymentMeans/cbc:PaymentMeansCode = 30 or
+                    //cac:PaymentMeans/cbc:PaymentMeansCode = 48 or
+                    //cac:PaymentMeans/cbc:PaymentMeansCode = 49 or
+                    //cac:PaymentMeans/cbc:PaymentMeansCode = 57 or
+                    //cac:PaymentMeans/cbc:PaymentMeansCode = 58 or
+                    //cac:PaymentMeans/cbc:PaymentMeansCode = 59"
               flag="fatal">[BR-NL-12] For suppliers in the Netherlands, the payment means code (cac:PaymentMeans/cbc:PaymentMeansCode) MUST be one of 30, 48, 49, 57, 58 or 59</assert>
     </rule>
 
