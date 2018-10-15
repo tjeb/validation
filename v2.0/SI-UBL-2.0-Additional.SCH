@@ -13,6 +13,10 @@
   <let name="supplierIsNL" value="$supplierCountry = 'NL'" />
   <!-- shortcut for both of the above -->
   <let name="s" value="$supplierIsNL and $is_SI-UBL-2.0" />
+
+
+
+
   <rule context="cac:AccountingSupplierParty/cac:Party[$s]">
     <assert id="BR-NL-1" test="contains(' 0106 0190 ', concat(' ', normalize-space(cac:PartyLegalEntity/cbc:CompanyID/@schemeID), ' '))" flag="fatal">[BR-NL-1] For suppliers in the Netherlands the supplier MUST provide either a KVK or OIN number for its legal entity identifier (cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID with schemeID 0106 or 0190)</assert>
   </rule>
@@ -37,9 +41,17 @@
                      cbc:PostalZone)" flag="fatal">[BR-NL-5] For suppliers in the Netherlands, if the fiscal representative is in the Netherlands, the representative's address (cac:TaxRepresentativeParty/cac:PostalAddress) MUST contain street name (cbc:StreetName), city (cbc:CityName) and postal zone (cbc:PostalZone)</assert>
   </rule>
   <!-- BR-NL-6 is not specified; BR-NL-7 and BR-NL-8 are specified below -->
-  <rule context="ubl:Invoice[$s]">
-    <assert id="BR-NL-9" test="cbc:InvoiceTypeCode != 384 or
-                    cac:BillingReference/cac:InvoiceDocumentReference/cbc:ID" flag="fatal">[BR-NL-9] For suppliers in the Netherlands, if the document is a corrective invoice (cbc:InvoiceTypeCode = 384), the document MUST contain an invoice reference (cac:BillingReference/cac:InvoiceDocumentReference/cbc:ID)</assert>
+  <rule context="cbc:InvoiceTypeCode[$s]">
+    <assert id="BR-NL-7" test=". = 380 or
+                    . = 381 or
+                    . = 384 or
+                    . = 389" flag="fatal">[BR-NL-7] The invoice type code (cbc:InvoiceTypeCode) MUST have one of the following values: 380, 381, 384, 389</assert>
+    <assert id="BR-NL-8" test=". != 381 or
+                    /ubl:CreditNote" flag="fatal">[BR-NL-8] If the invoice type code (cbc:InvoiceTypeCode) is 381, the document MUST use the CreditNote scheme</assert>
+    <assert id="BR-NL-8" test=". != 381 or
+                    /ubl:Invoice" flag="fatal">[BR-NL-8] If the invoice type code (cbc:InvoiceTypeCode) is 380, 384 or 389, the document MUST use the Invoice scheme</assert>
+    <assert id="BR-NL-9" test="(. != 384) or
+                    /*/cac:BillingReference/cac:InvoiceDocumentReference/cbc:ID" flag="fatal">[BR-NL-9] For suppliers in the Netherlands, if the document is a corrective invoice (cbc:InvoiceTypeCode = 384), the document MUST contain an invoice reference (cac:BillingReference/cac:InvoiceDocumentReference/cbc:ID)</assert>
   </rule>
   <rule context="cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity[$s]">
     <assert id="BR-NL-10" test="not(//cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cac:Country/cbc:IdentificationCode = 'NL' and cbc:CompanyID and not(contains(' 0106 0190 ', concat(' ', normalize-space(cbc:CompanyID/@schemeID), ' '))))" flag="fatal">[BR-NL-10] For suppliers in the Netherlands, if the customer is in the Netherlands, the customer's legal entity identifier (cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyID) MUST be either a KVK (schemeID=0106) or OIN number (schemeID=0190)</assert>
@@ -54,16 +66,6 @@
               cbc:PaymentMeansCode = 57 or
               cbc:PaymentMeansCode = 58 or
               cbc:PaymentMeansCode = 59" flag="fatal">[BR-NL-12] For suppliers in the Netherlands, the payment means code (cac:PaymentMeans/cbc:PaymentMeansCode) MUST be one of 30, 48, 49, 57, 58 or 59</assert>
-  </rule>
-  <rule context="cbc:InvoiceTypeCode[$s]">
-    <assert id="BR-NL-7" test=". = 380 or
-                    . = 381 or
-                    . = 384 or
-                    . = 389" flag="fatal">[BR-NL-7] The invoice type code (cbc:InvoiceTypeCode) MUST have one of the following values: 380, 381, 384, 389</assert>
-    <assert id="BR-NL-8" test=". != 381 or
-                    /ubl:CreditNote" flag="fatal">[BR-NL-8] If the invoice type code (cbc:InvoiceTypeCode) is 381, the document MUST use the CreditNote scheme</assert>
-    <assert id="BR-NL-8" test=". != 381 or
-                    /ubl:Invoice" flag="fatal">[BR-NL-8] If the invoice type code (cbc:InvoiceTypeCode) is 380, 384 or 389, the document MUST use the Invoice scheme</assert>
   </rule>
   <!--
        Recommendations specific for NL
@@ -84,70 +86,70 @@
   <rule context="cac:BillingReference/cac:InvoiceDocumentReference/cbc:IssueDate[$s]">
     <assert id="BR-NL-24" test="false" flag="warning">[BR-NL-24] The use of a preceding invoice issue date (cac:BillingReference/cac:InvoiceDocumentReference/cbc:IssueDate) is not recommended</assert>
   </rule>
-  <rule context="cac:AccountingSupplierParty/cac:Party/cac:PartyTaxScheme/cbc:CompanyID[$s]">
-    <assert id="BR-NL-25" test="false" flag="warning">[BR-NL-25] The use of a seller tax registration identifier (cac:AccountingSupplierParty/cac:Party/cac:PartyTaxScheme/cbc:CompanyID) is not recommended, since this is not applicable to suppliers in the Netherlands</assert>
+  <rule context="cac:AccountingSupplierParty/cac:Party/cac:PartyTaxScheme[$s]">
+    <assert id="BR-NL-25" test="not(cbc:CompanyID) or cac:TaxScheme/cbc:ID = 'VAT'" flag="warning">[BR-NL-25] The use of a seller tax registration identifier (cac:AccountingSupplierParty/cac:Party/cac:PartyTaxScheme/cbc:CompanyID) is not recommended when the tax scheme is not VAT, since this is not applicable to suppliers in the Netherlands</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-26" test="cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyLegalForm" flag="warning">[BR-NL-26] The use of the seller additional legal information field (cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyLegalForm) is not recommended, since this is not applicable for suppliers in the Netherlands</assert>
+  <rule context="cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyLegalForm[$s]">
+    <assert id="BR-NL-26" test="false" flag="warning">[BR-NL-26] The use of the seller additional legal information field (cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:CompanyLegalForm) is not recommended, since this is not applicable for suppliers in the Netherlands</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-27-1" test="cac:AccountingSupplierParty/cac:Party/cac:PostalAddress/cac:AddressLine/cbc:Line" flag="warning">[BR-NL-27] The use of the seller address line 3 (cac:AccountingSupplierParty/cac:Party/cac:PostalAddress/cac:AddressLine/cbc:Line) is not recommended</assert>
+  <rule context="cac:AccountingSupplierParty/cac:Party/cac:PostalAddress/cac:AddressLine/cbc:Line[$s]">
+    <assert id="BR-NL-27-1" test="false" flag="warning">[BR-NL-27] The use of the seller address line 3 (cac:AccountingSupplierParty/cac:Party/cac:PostalAddress/cac:AddressLine/cbc:Line) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-27-2" test="cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cac:AddressLine/cbc:Line" flag="warning">[BR-NL-27] The use of the seller address line 3 (cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cac:AddressLine/cbc:Line) is not recommended</assert>
+  <rule context="cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cac:AddressLine/cbc:Line[$s]">
+    <assert id="BR-NL-27-2" test="false" flag="warning">[BR-NL-27] The use of the customer address line 3 (cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cac:AddressLine/cbc:Line) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-27-3" test="cac:TaxRepresentativePart/cac:PostalAddress/cac:AddressLine/cbc:Line" flag="warning">[BR-NL-27] The use of the seller address line 3 (cac:TaxRepresentativePart/cac:PostalAddress/cac:AddressLine/cbc:Line) is not recommended</assert>
+  <rule context="cac:TaxRepresentativePart/cac:PostalAddress/cac:AddressLine/cbc:Line[$s]">
+    <assert id="BR-NL-27-3" test="false" flag="warning">[BR-NL-27] The use of the tax representative address line 3 (cac:TaxRepresentativePart/cac:PostalAddress/cac:AddressLine/cbc:Line) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-27-4" test="cac:Delivery/cac:DeliveryLocation/cac:Address/cac:AddressLine/cbc:Line" flag="warning">[BR-NL-27] The use of the seller address line 3 (cac:Delivery/cac:DeliveryLocation/cac:Address/cac:AddressLine/cbc:Line) is not recommended</assert>
+  <rule context="cac:Delivery/cac:DeliveryLocation/cac:Address/cac:AddressLine/cbc:Line[$s]">
+    <assert id="BR-NL-27-4" test="false" flag="warning">[BR-NL-27] The use of the delivery address line 3 (cac:Delivery/cac:DeliveryLocation/cac:Address/cac:AddressLine/cbc:Line) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-28-1" test="cac:AccountingSupplierParty/cac:Party/cac:PostalAddress/cbc:CountrySubentity" flag="warning">[BR-NL-28] The use of a country subdivision (cac:AccountingSupplierParty/cac:Party/cac:PostalAddress/cbc:CountrySubentity) is not recommended</assert>
+  <rule context="cac:AccountingSupplierParty/cac:Party/cac:PostalAddress/cbc:CountrySubentity[$s]">
+    <assert id="BR-NL-28-1" test="false" flag="warning">[BR-NL-28] The use of a country subdivision (cac:AccountingSupplierParty/cac:Party/cac:PostalAddress/cbc:CountrySubentity) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-28-2" test="cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cbc:CountrySubentity" flag="warning">[BR-NL-28] The use of a country subdivision (cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cbc:CountrySubentity) is not recommended</assert>
+  <rule context="cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cbc:CountrySubentity[$s]">
+    <assert id="BR-NL-28-2" test="false" flag="warning">[BR-NL-28] The use of a country subdivision (cac:AccountingCustomerParty/cac:Party/cac:PostalAddress/cbc:CountrySubentity) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-28-3" test="cac:TaxRepresentativePart/cac:PostalAddress/cbc:CountrySubentity" flag="warning">[BR-NL-28] The use of a country subdivision (cac:TaxRepresentativePart/cac:PostalAddress/cbc:CountrySubentity) is not recommended</assert>
+  <rule context="cac:TaxRepresentativePart/cac:PostalAddress/cbc:CountrySubentity[$s]">
+    <assert id="BR-NL-28-3" test="false" flag="warning">[BR-NL-28] The use of a country subdivision (cac:TaxRepresentativePart/cac:PostalAddress/cbc:CountrySubentity) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-28-4" test="cac:Delivery/cac:DeliveryLocation/cac:Address/cbc:CountrySubentity" flag="warning">[BR-NL-28] The use of a country subdivision (cac:Delivery/cac:DeliveryLocation/cac:Address/cbc:CountrySubentity) is not recommended</assert>
+  <rule context="cac:Delivery/cac:DeliveryLocation/cac:Address/cbc:CountrySubentity[$s]">
+    <assert id="BR-NL-28-4" test="false" flag="warning">[BR-NL-28] The use of a country subdivision (cac:Delivery/cac:DeliveryLocation/cac:Address/cbc:CountrySubentity) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-29" test="cac:PaymentMeans/cbc:PaymentMeansCode/@Name" flag="warning">[BR-NL-29] The use of a payment means text (cac:PaymentMeans/cbc:PaymentMeansCode/@Name) is not recommended</assert>
+  <rule context="cac:PaymentMeans/cbc:PaymentMeansCode/@Name[$s]">
+    <assert id="BR-NL-29" test="false" flag="warning">[BR-NL-29] The use of a payment means text (cac:PaymentMeans/cbc:PaymentMeansCode/@Name) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-30" test="cac:PaymentMeans/cac:PayeeFinancialAccount/cbc:Name" flag="warning">[BR-NL-30] The use of a payment account name (cac:PaymentMeans/cac:PayeeFinancialAccount/cbc:Name) is not recommended</assert>
+  <rule context="cac:PaymentMeans/cac:PayeeFinancialAccount/cbc:Name[$s]">
+    <assert id="BR-NL-30" test="false" flag="warning">[BR-NL-30] The use of a payment account name (cac:PaymentMeans/cac:PayeeFinancialAccount/cbc:Name) is not recommended</assert>
     <!-- rule BR-NL-31 is specified below, as it needs more specific context -->
     <!-- should move BR-NL-32 to its own context too, then add BR-NL-34 there -->
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-32-1" test="cac:AllowanceCharge/cbc:AllowanceChargeReasonCode" flag="warning">[BR-NL-32] The use of an allowance reason code (cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
+  <rule context="cac:AllowanceCharge/cbc:AllowanceChargeReasonCode[$s]">
+    <assert id="BR-NL-32-1" test="false" flag="warning">[BR-NL-32] The use of an allowance reason code (cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-32-2" test="cac:InvoiceLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode" flag="warning">[BR-NL-32] The use of an allowance reason code (cac:InvoiceLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
+  <rule context="cac:InvoiceLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode[$s]">
+    <assert id="BR-NL-32-2" test="false" flag="warning">[BR-NL-32] The use of an allowance reason code (cac:InvoiceLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-32-3" test="cac:CreditNoteLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode" flag="warning">[BR-NL-32] The use of an allowance reason code (cac:CreditNoteLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
+  <rule context="cac:CreditNoteLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode[$s]">
+    <assert id="BR-NL-32-3" test="false" flag="warning">[BR-NL-32] The use of an allowance reason code (cac:CreditNoteLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
     <!-- TODO: this test needs checking and testing -->
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-33" test="cac:TaxTotal/cbc:TaxAmount/@currencyID and cbc:DocumentCurrencyCode and cac:TaxTotal/cbc:TaxAmount/@currencyID != cbc:DocumentCurrencyCode" flag="warning">[BR-NL-33] The use of a tax total in accounting currency (cac:TaxTotal/cbc:TaxAmount/@currencyID different than DocumentCurrencyCode) is not recommended</assert>
+  <rule context="cac:TaxTotal/cbc:TaxAmount[$s]">
+    <assert id="BR-NL-33" test="not(@currencyID) or not(/cbc:DocumentCurrencyCode) or @currencyID = /cbc:DocumentCurrencyCode" flag="warning">[BR-NL-33] The use of a tax total in accounting currency (cac:TaxTotal/cbc:TaxAmount/@currencyID different than DocumentCurrencyCode) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-32-1" test="cac:AllowanceCharge/cbc:AllowanceChargeReasonCode" flag="warning">[BR-NL-32] The use of a charge reason code (cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
+  <rule context="cac:AllowanceCharge/cbc:AllowanceChargeReasonCode[$s]">
+    <assert id="BR-NL-32-1" test="false" flag="warning">[BR-NL-32] The use of a charge reason code (cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-32-2" test="cac:InvoiceLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode" flag="warning">[BR-NL-32] The use of a charge reason code (cac:InvoiceLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
+  <rule context="cac:InvoiceLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode[$s]">
+    <assert id="BR-NL-32-2" test="false" flag="warning">[BR-NL-32] The use of a charge reason code (cac:InvoiceLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-32-3" test="cac:CreditNoteLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode" flag="warning">[BR-NL-32] The use of a charge reason code (cac:CreditNoteLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
+  <rule context="cac:CreditNoteLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode[$s]">
+    <assert id="BR-NL-32-3" test="false" flag="warning">[BR-NL-32] The use of a charge reason code (cac:CreditNoteLine/cac:AllowanceCharge/cbc:AllowanceChargeReasonCode) is not recommended</assert>
   </rule>
-  <rule context="[$s]">
-    <assert id="BR-NL-35" test="cac:TaxTotal/cac:TaxSubtotal/cac:TaxCategory/cbc:TaxExemptionReasonCode" flag="warning">[BR-NL-35] The use of a tax exemption reason code (cac:TaxTotal/cac:TaxSubtotal/cac:TaxCategory/cbc:TaxExemptionReasonCode) is not recommended</assert>
+  <rule context="cac:TaxTotal/cac:TaxSubtotal/cac:TaxCategory/cbc:TaxExemptionReasonCode[$s]">
+    <assert id="BR-NL-35" test="false" flag="warning">[BR-NL-35] The use of a tax exemption reason code (cac:TaxTotal/cac:TaxSubtotal/cac:TaxCategory/cbc:TaxExemptionReasonCode) is not recommended</assert>
   </rule>
-  <rule context="cac:PaymentMeans">
+  <rule context="cac:PaymentMeans[$s]">
     <!-- check if payment means code is 58 or 59 -->
     <!-- NOTE: this should be tested well... -->
     <assert id="BR-NL-31" test="not((cbc:PaymentMeansCode = 58 or cbc:PaymentMeansCode = 59) and cac:PaymentMeans/cac:PayeeFinancialAccount/cac:FinancialInstitutionBranch/cbc:ID)" flag="warning">[BR-NL-31] The use of a payment service provider identifier (cac:PaymentMeans/cac:PayeeFinancialAccount/cac:FinancialInstitutionBranch/cbc:ID) is not recommended for SEPA payments (cac:PaymentMeans/cbc:PaymentMeansCode = 58 or 59)</assert>
